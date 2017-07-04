@@ -21,22 +21,14 @@
 *              -------     -------              *
 *                                               *
 *************************************************/
-#ifndef math_h
-#define math_h
 #include <math.h>
-#endif
-#ifndef stdlib_h
-#define stdlib_h
 #include <stdlib.h>
-#endif
 
 #include <SoftwareSerial.h>
 #include <ChipE.h>
 
 //HC-SR04 ultrason
-#ifndef NewPing_h
 #include <NewPing.h>
-#endif
 #define TRIGGER 6
 #define ECHO    7
 #define MIN_DISTANCE 2
@@ -83,7 +75,6 @@ NewPing mySonar(TRIGGER, ECHO, MAX_DISTANCE);
 #define BTCommandTurnRight
 #define BTCommandWalkFront
 #define BTCommandWalkBack
-
 
 SoftwareSerial HC06(RxD,TxD);
 ChipE chip;
