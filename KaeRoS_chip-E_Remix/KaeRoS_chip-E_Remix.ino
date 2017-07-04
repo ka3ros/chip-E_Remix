@@ -27,14 +27,13 @@
 #include <SoftwareSerial.h>
 #include <ChipE.h>
 
-//HC-SR04 ultrason
+//HC-SR04 ultrasound sensor
 #include <NewPing.h>
 #define TRIGGER 6
 #define ECHO    7
 #define MIN_DISTANCE 2
 #define MAX_DISTANCE 300
 NewPing mySonar(TRIGGER, ECHO, MAX_DISTANCE);
-//call mySonar.ping_cm() (0 => too far)
 
 // Nokia 5110 LCDs
 #define L_CLK 26
@@ -79,7 +78,7 @@ NewPing mySonar(TRIGGER, ECHO, MAX_DISTANCE);
 SoftwareSerial HC06(RxD,TxD);
 ChipE chip;
 // calibration: distance walked with 2 forward steps
-// first, consider forward~=backward
+// at first, let's consider forward~=backward
 #define STEPWALK 2
 void goFront(unsigned short steps=1)
 {
@@ -89,10 +88,12 @@ void goFront(unsigned short steps=1)
   }
   else
   {
-    while(mySonar.ping_cm()>STEPWALK+MIN_DISTANCE)
+    while(0<1)
+      delay(10000);
+/*while(mySonar.ping_cm()>STEPWALK+MIN_DISTANCE)
     {
       chip.turn(2,1000,LEFT);
-    }
+    }*/
   }
 }
 
@@ -117,19 +118,19 @@ void setup()
 
 void loop()
 {
-  Serial.print("Distance: ");
-  Serial.print(sonarEcho());
-  Serial.println(" cm");
+  Serial.print("Distance: "); Serial.print(mySonar.ping_cm()); Serial.println(" cm");
   for(unsigned short i=10;i>0;i--)
   {
 //    set_text(L5110,0,0,string(i));
     delay(1000);
   }
+  look(LookLeft);
+  delay(1000);
+  look(LookRight);
+  delay(1000);
+  blink();
   set_text(L5110,0,0,"walking");
-  chip.walk( 4, 2000, FORWARD );
-
-//  blink();
-  
+  goFront();  
 /*  char what2do="";
   if (HC06.available())
   {

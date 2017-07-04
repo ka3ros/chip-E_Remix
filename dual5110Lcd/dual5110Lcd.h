@@ -30,7 +30,7 @@
 #define BORDER 2
 
 #define eyeRad 8
-#define eyeOpen HEIGHT/2-eyeRad/2
+#define eyeOpen HEIGHT/2-BORDER
 #define eyeOpened 1
 #define eyeClosed 0
 
@@ -105,7 +105,7 @@ void openEyes(const unsigned short eyes=BOTH, const unsigned short speed=normalL
       //draw upper then lower lid
       lcd5110[eye].drawLine(1,HEIGHT/2-i,WIDTH-2,HEIGHT/2-i,WHITE);
       lcd5110[eye].drawLine(1,HEIGHT/2+i,WIDTH-2,HEIGHT/2+i,WHITE);
-      if(i<=eyeRad)
+      if(i<eyeRad)
         drawPup(eye);
       else
         lcd5110[eye].display();
@@ -121,13 +121,13 @@ void closeEyes(const unsigned short eyes=BOTH, const unsigned short speed=normal
   unsigned short lidPos=0; // 0 = "eye closed", HEIGHT/2-eyeRad/2 = eye open 
   unsigned short startEye,endEye;
   unsigned short eye,i;
-  return;
+//  return;
   if(eyes==BOTH) { startEye=0; endEye=1; }
   else { startEye=eyes;endEye=eyes;}
 
-  for(i=eyeOpen;i>0;i--)
+  //eyeOpen=Height/2-eyeRad
+  for(i=eyeOpen;i>0;i-=2)
   {
-  	Serial.println("lidPos: "+i);
     for(eye=startEye;eye<=endEye;eye++)
     {
       //draw upper then lower lid
@@ -142,9 +142,6 @@ void closeEyes(const unsigned short eyes=BOTH, const unsigned short speed=normal
 
 void blink(const unsigned short eyes=BOTH)
 {
-  unsigned short eye,startEye,endEye;
-  if(eyes==BOTH) { startEye=0; endEye=1; }
-  else { startEye=eyes;endEye=eyes;}
   closeEyes(eyes,fastLidSpeed);
   openEyes(eyes,fastLidSpeed);
 }
