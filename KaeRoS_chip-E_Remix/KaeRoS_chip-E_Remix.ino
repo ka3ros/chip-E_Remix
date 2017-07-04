@@ -65,7 +65,7 @@ NewPing mySonar(TRIGGER, ECHO, MAX_DISTANCE);
 #define PIN_RL 3 //Roll Left
 #define PIN_YR 4 //Yaw Right
 #define PIN_YL 5 //Yaw Left
-#define TRIM_RR -2 //Trim on the right ankle (adjust +/- as necessary)
+#define TRIM_RR -3 //Trim on the right ankle (adjust +/- as necessary)
 #define TRIM_RL 0 //Trim on the left ankle (adjust +/- as necessary)
 #define TRIM_YR +4 //Trim on the right hip (adjust +/- as necessary)
 #define TRIM_YL 0 //Trim on the left hip (adjust +/- as necessary)
@@ -77,23 +77,36 @@ NewPing mySonar(TRIGGER, ECHO, MAX_DISTANCE);
 
 SoftwareSerial HC06(RxD,TxD);
 ChipE chip;
-// calibration: distance walked with 2 forward steps
+// calibration: distance walked with 4 forward steps
 // at first, let's consider forward~=backward
-#define STEPWALK 2
+#define STEPWALK 4
+#define DISTANCE_PER_STEP 2 // cm
+
+
 void goFront(unsigned short steps=1)
 {
-  if(mySonar.ping_cm()>STEPWALK+MIN_DISTANCE)
+  unsigned int distance;
+  distance=mySonar.ping_cm();
+  lcd5110[L5110].clearDisplay();
+  lcd5110[L5110].setTextColor(BLACK);
+  lcd5110[L5110].setCursor(0,0);
+  lcd5110[L5110].print(distance);
+  lcd5110[L5110].println(" cm");
+  lcd5110[L5110].display();
+  if(distance==0)
+    distance=MAX_DISTANCE;
+  Serial.print(distance);
+  Serial.println(" cm");
+  if(distance>(STEPWALK*DISTANCE_PER_STEP)+MIN_DISTANCE)
   {
-    chip.walk(2,1000,FORWARD);
+    chip.walk(STEPWALK,2000,FORWARD);
   }
   else
   {
-    while(0<1)
-      delay(10000);
-/*while(mySonar.ping_cm()>STEPWALK+MIN_DISTANCE)
-    {
-      chip.turn(2,1000,LEFT);
-    }*/
+    Serial.print("Obstacle detected in ");
+    Serial.print(distance);
+    Serial.println(" cm. Turning to the left");
+    chip.turn(2,1000,LEFT);
   }
 }
 
@@ -114,23 +127,19 @@ void setup()
   delay(3000);
 //  HC06.begin(115200);
   openEyes();
+  Serial.print("Minimal distance to walk: ");
+  Serial.print((STEPWALK*DISTANCE_PER_STEP)+MIN_DISTANCE);
+  Serial.println(" cm");
 }
-
+unsigned short loops=0;
 void loop()
 {
-  Serial.print("Distance: "); Serial.print(mySonar.ping_cm()); Serial.println(" cm");
-  for(unsigned short i=10;i>0;i--)
-  {
-//    set_text(L5110,0,0,string(i));
-    delay(1000);
-  }
-  look(LookLeft);
+  loops++;
+  Serial.print(loops);
+  Serial.print(" : ");
+  goFront();
   delay(1000);
-  look(LookRight);
-  delay(1000);
-  blink();
-  set_text(L5110,0,0,"walking");
-  goFront();  
+  
 /*  char what2do="";
   if (HC06.available())
   {

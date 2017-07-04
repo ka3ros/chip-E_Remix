@@ -30,7 +30,7 @@
 #define BORDER 2
 
 #define eyeRad 8
-#define eyeOpen HEIGHT/2-BORDER
+#define eyeOpen HEIGHT/2-2*BORDER
 #define eyeOpened 1
 #define eyeClosed 0
 
@@ -98,13 +98,13 @@ void openEyes(const unsigned short eyes=BOTH, const unsigned short speed=normalL
   unsigned short eye,i;
   if(eyes==BOTH) { startEye=0; endEye=1; }
   else { startEye=eyes;endEye=eyes;}
-  for(i=0;i<eyeOpen;i++)
+  for(i=0;i<eyeOpen+1;i++)
   {
     for(eye=startEye;eye<=endEye;eye++)
     {
       //draw upper then lower lid
-      lcd5110[eye].drawLine(1,HEIGHT/2-i,WIDTH-2,HEIGHT/2-i,WHITE);
-      lcd5110[eye].drawLine(1,HEIGHT/2+i,WIDTH-2,HEIGHT/2+i,WHITE);
+      lcd5110[eye].drawLine(1,HEIGHT/2-i,WIDTH-3,HEIGHT/2-i,WHITE);
+      lcd5110[eye].drawLine(1,HEIGHT/2+i,WIDTH-3,HEIGHT/2+i,WHITE);
       if(i<eyeRad)
         drawPup(eye);
       else
