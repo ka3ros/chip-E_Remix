@@ -25,7 +25,10 @@
 #include <stdlib.h>
 
 #include <SoftwareSerial.h>
-#include <ChipE.h>
+// I added a period parameter to the home(unsigned int period=500) method to have a smoother move
+// with each call to home() my chip-e had an epyleptic shock
+// while 4 steps don't end on full flat feet so I really needed home()
+#include <ChipE.h> 
 
 //HC-SR04 ultrasound sensor
 #include <NewPing.h>
@@ -61,14 +64,14 @@ NewPing mySonar(TRIGGER, ECHO, MAX_DISTANCE);
  *            ||     ||
  *            ||     ||
  * RR ==>   -----   ------  <== RL */
-#define PIN_RR 2 //Roll Right
-#define PIN_RL 3 //Roll Left
-#define PIN_YR 4 //Yaw Right
-#define PIN_YL 5 //Yaw Left
-#define TRIM_RR -3 //Trim on the right ankle (adjust +/- as necessary)
-#define TRIM_RL 0 //Trim on the left ankle (adjust +/- as necessary)
-#define TRIM_YR +4 //Trim on the right hip (adjust +/- as necessary)
-#define TRIM_YL 0 //Trim on the left hip (adjust +/- as necessary)
+#define PIN_RR 2  // Ankle//Roll Right
+#define PIN_RL 3  // Ankle//Roll Left
+#define PIN_YR 4  // HipYaw Right
+#define PIN_YL 5  // Hip/Yaw Left
+#define TRIM_RR -3  // Trim on the right ankle (adjust +/- as necessary)
+#define TRIM_RL 0   // Trim on the left ankle (adjust +/- as necessary)
+#define TRIM_YR +4  // Trim on the right hip (adjust +/- as necessary)
+#define TRIM_YL 0   // Trim on the left hip (adjust +/- as necessary)
 
 #define BTCommandTurnLeft
 #define BTCommandTurnRight
@@ -100,13 +103,14 @@ void goFront(unsigned short steps=1)
   if(distance>(STEPWALK*DISTANCE_PER_STEP)+MIN_DISTANCE)
   {
     chip.walk(STEPWALK,2000,FORWARD);
+    chip.home(1000);
   }
   else
   {
     Serial.print("Obstacle detected in ");
     Serial.print(distance);
     Serial.println(" cm. Turning to the left");
-    chip.turn(2,1000,LEFT);
+    chip.turn(2,2000,LEFT);
   }
 }
 
